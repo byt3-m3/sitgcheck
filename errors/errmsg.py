@@ -15,3 +15,9 @@ def ConfigErrMsg(device):
 def ListEmptyErrMsg(device):
     __ListEmptyErrMsg__ = "Error: List is empty, run get_all_int() func"
     return(__ListEmptyErrMsg__)
+
+
+def __name__err(device):
+    __name__err = "Not able to retrevie name of object for {}"\
+        .format(device.mgmt_ip)
+    return(__ListEmptyErrMsg__)
