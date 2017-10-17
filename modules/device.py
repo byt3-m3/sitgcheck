@@ -77,7 +77,6 @@ class device:
             # creates RegEX to search for hostname
             pattern = re.compile('(?<=hostname ).*', re.I | re.M)
             results = pattern.findall(str(self.ssh_output))
-
             for i in results:
                 self.hostname = i
         else:
