@@ -81,8 +81,8 @@ class device:
             pattern = re.compile('(?<=^interface ).*', re.I | re.M)
             results = str(pattern.findall((self.ssh_output)))\
                 .replace("\\r", "").split(",")
-            del self.all_interface_list[:]
-
+            self.all_interface_list = []
+            #del self.all_interface_list[:]
             for i in results:
                 self.all_interface_list.append(i)
                 # local_int = i
@@ -126,9 +126,9 @@ class device:
         if len(self.all_interface_list) > 0:
             del self.all_interface_list[:]
             self.get_all_interfaces()
-            print(self.all_interface_list)
-        else:
-            print(self.__connect_err_msg__)
+            return(self.all_interface_list)
+        elif len(self.all_interface_list) == 0:
+            print(errmsg.ListEmptyErrMsg(self))
 
     def __repr__(self):
         self.get_up_interfaces()
