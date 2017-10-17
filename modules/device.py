@@ -38,11 +38,10 @@ class device:
             'secret': 'secret',     # optional, defaults to ''
             'verbose': False,       # optional, defaults to False
         }
-        # Connects the NetMiko session handler
         self.net_connect = ConnectHandler(**cisco_dev)
         self.ssh_output = self.net_connect.send_command("show run")
 
-        # Creates CiscoConfParse Object with running config
+        # creates CiscoConfParse Object with running config
         self.parsed_config = CiscoConfParse(self.ssh_output.split())
 
         # Opens and writes running config on local machine
@@ -167,6 +166,9 @@ def list_int(device):
 
 def main():
     '''Main Routine for testing DEVICE class'''
+
+    # sw1.connect()
+    # sw1.get_hostname()
 
 
 if __name__ == '__main__':
