@@ -1,7 +1,5 @@
 from netmiko import ConnectHandler
 import re
-import os
-import datetime
 from ciscoconfparse import CiscoConfParse
 
 
@@ -53,13 +51,13 @@ class device:
 
     def send_command(self, command):
         ''' In order to send commands to a device, the connect() Method must be initiated before this routine will exectue'''
-        if self.status == True:
+        if self.status is True:
             self.ssh_output = self.net_connect.send_command(command)
         else:
             print(self.__connect_err_msg__)
 
     def get_hostname(self):
-        if self.status == True:
+        if self.status is True:
             self.send_command('show run | inc hostname')
 
             # creates RegEX to search for hostname
@@ -72,8 +70,7 @@ class device:
             print(self.__connect_err_msg__)
 
     def get_all_interfaces(self):
-        if self.status == True:
-            local_int = []
+        if self.status is True:
             self.send_command("show run | inc interface")
             pattern = re.compile('(?<=^interface ).*', re.I | re.M)
             results = str(pattern.findall((self.ssh_output))).replace("\\r", "").split(",")
@@ -87,7 +84,7 @@ class device:
             print(self.__connect_err_msg__)
 
     def get_up_interfaces(self):
-        if self.status == True:
+        if self.status is True:
             self.send_command("show ip int br | inc up")
             # output = str(self.ssh_output)
             # pattern = re.compile('(FastEthernet*\d+/\d+/\d+|GigabitEthernet*\d+/\d+/\d+|Ethernet.\d+/\d+.\d+|Vlan\d+)', re.I|re.M)
@@ -111,7 +108,7 @@ class device:
             print(self.__connect_err_msg__)
 
     def get_config(self):
-        if self.status == True:
+        if self.status is True:
             self.send_command("show run")
             self.parsed_config = CiscoConfParse(self.ssh_output.split())
         else:
