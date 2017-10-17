@@ -1,6 +1,7 @@
 from netmiko import ConnectHandler
 import re
 from ciscoconfparse import CiscoConfParse
+from errors import errmsg
 
 
 class device:
