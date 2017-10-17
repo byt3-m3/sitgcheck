@@ -7,12 +7,6 @@ from errors import errmsg
 class device:
     '''Class VARS'''
     id = 0
-    remote_conn = ""
-    config = ""
-    parsed_config = ""
-    net_connect = []
-    up_interface_list = list()
-    all_interface_list = list()
 
     '''Error Message VARS'''
     __connect_err_msg__ = "Error: Be sure to run the connect() method first"
@@ -26,6 +20,12 @@ class device:
         self.dev_type = 'cisco_ios'
         self.status = False
         self.id += 1
+        self.all_interface_list = []
+        self.remote_conn = ""
+        self.config = ""
+        self.parsed_config = ""
+        self.net_connect = []
+        self.up_interface_list = list()
 
     def connect(self):
         cisco_dev = {
