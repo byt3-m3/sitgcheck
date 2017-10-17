@@ -52,14 +52,15 @@ class device:
         self.status = True
 
     def send_command(self, command):
-        ''' In order to send commands to a device, '''
-        '''the connect() Method must be initiated before this routine '''
-        ''' will exectue'''
+        ''' In order to send commands to a device, \
+        the connect() Method must be initiated before this routine \
+        will exectue'''
+
         if self.status is True:
             self.cmd_out = self.net_connect.send_command(command)
         else:
             # print(self.__connect_err_msg__)
-            errmsg.ConnectErrorMSG()
+            print(errmsg.ConnectErrorMSG(self))
 
     def get_hostname(self):
         if self.status is True:
@@ -72,7 +73,7 @@ class device:
             for i in results:
                 self.hostname = i
         else:
-            print(self.__connect_err_msg__)
+            print(errmsg.ConnectErrorMSG(self))
 
     def get_all_interfaces(self):
         if self.status is True:
@@ -87,7 +88,7 @@ class device:
                 # local_int = i
             self.all_int_count = len(self.all_interface_list)
         else:
-            print(self.__connect_err_msg__)
+            print(errmsg.ConnectErrorMSG(self))
 
     def get_up_interfaces(self):
         if self.status is True:
@@ -116,7 +117,7 @@ class device:
             self.send_command("show run")
             self.parsed_config = CiscoConfParse(self.ssh_output.split())
         else:
-            print(self.__config_err_msg__)
+            print(errmsg.ConnectErrorMSG(self))
 
     def set_hostname(self, hostname):
         self.hostname = hostname
