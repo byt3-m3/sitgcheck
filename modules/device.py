@@ -27,6 +27,14 @@ class device:
         self.net_connect = []
         self.up_interface_list = list()
 
+    @property
+    def __name__(self):
+        try:
+            self.get_hostname()
+            return self.hostname
+        except Exception:
+            errmsg.__name__err(self)
+
     def connect(self):
         cisco_dev = {
             'device_type': self.dev_type,
