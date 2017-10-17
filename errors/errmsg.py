@@ -14,3 +14,4 @@ def ConfigErrMsg(device):
 
 def ListEmptyErrMsg(device):
     __ListEmptyErrMsg__ = "Error: List is empty, run get_all_int() func"
+    return(__ListEmptyErrMsg__)
