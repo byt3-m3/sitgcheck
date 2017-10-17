@@ -2,6 +2,8 @@ from netmiko import ConnectHandler
 import re
 from ciscoconfparse import CiscoConfParse
 
+# New Code added
+
 
 class device:
     '''Class VARS'''
@@ -174,4 +176,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
