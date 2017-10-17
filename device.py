@@ -1,5 +1,7 @@
 from netmiko import ConnectHandler
 import re
+import os
+import datetime
 from ciscoconfparse import CiscoConfParse
 
 
@@ -27,9 +29,6 @@ class device:
         self.id += 1
 
     def connect(self):
-        import paramiko
-        import time
-
         cisco_dev = {
             'device_type': self.dev_type,
             'ip':   self.mgmt_ip,
@@ -41,8 +40,14 @@ class device:
         }
         self.net_connect = ConnectHandler(**cisco_dev)
         self.ssh_output = self.net_connect.send_command("show run")
-        #self.config = self.ssh_output
+
+        # creates CiscoConfParse Object with running config
         self.parsed_config = CiscoConfParse(self.ssh_output.split())
+
+        # Opens and writes running config on local machine
+        running_config = open("./configs/{}.{}.cfg".format(self.mgmt_ip), "w")
+        running_config.write(self.ssh_output)
+
         self.status = True
 
     def send_command(self, command):
@@ -75,7 +80,7 @@ class device:
 
             for i in results:
                 self.all_interface_list.append(i)
-                #local_int = i
+                # local_int = i
             self.all_int_count = len(self.all_interface_list)
         else:
             print(self.__connect_err_msg__)
@@ -83,11 +88,11 @@ class device:
     def get_up_interfaces(self):
         if self.status == True:
             self.send_command("show ip int br | inc up")
-            #output = str(self.ssh_output)
-            #pattern = re.compile('(FastEthernet*\d+/\d+/\d+|GigabitEthernet*\d+/\d+/\d+|Ethernet.\d+/\d+.\d+|Vlan\d+)', re.I|re.M)
+            # output = str(self.ssh_output)
+            # pattern = re.compile('(FastEthernet*\d+/\d+/\d+|GigabitEthernet*\d+/\d+/\d+|Ethernet.\d+/\d+.\d+|Vlan\d+)', re.I|re.M)
             pattern = re.compile(
                 '(Vlan\d*|FastEthernet\d*/\d*/\d*|GigabitEthernet\d*/\d*/\d*|loopback\*)', re.I | re.M)
-            #results = pattern.findall(self.ssh_output.decode())
+            # results = pattern.findall(self.ssh_output.decode())
             results = str(pattern.findall((self.ssh_output))).replace("\\r", "").split(",")
             # print(self.ssh_output.decode())
 
@@ -111,7 +116,6 @@ class device:
         else:
             print(self.__config_err_msg__)
 
-    @property
     def set_hostname(self, hostname):
         self.hostname = hostname
 
@@ -168,9 +172,8 @@ def main():
 
     # sw1.connect()
     r1.connect()
-    sw1.connect()
-
-    r1.get_hostname()
+    # sw1.connect()
+    # sw1.get_hostname()
 
 
 if __name__ == '__main__':
