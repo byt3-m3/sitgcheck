@@ -172,5 +172,7 @@ def main():
     '''Main Routine for testing DEVICE class'''
 
 
+__ver__ = "1.0"
+
 if __name__ == '__main__':
     main()
