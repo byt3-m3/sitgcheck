@@ -22,32 +22,6 @@ NET0441 = ["V-15434", "username"]
 
 
 # Subroutines for  STIG Checks
-def connect_ssh(ip, username, password, command):
- # Importing paramiko and time modules for use within subroutine
-    import paramiko
-    import time
-    global ssh_output
-    # Creates the paramikoe SSHClient class
-    remote_conn_pre = paramiko.SSHClient()
-
-    # Adds remote host public to local host key database
-    remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-    # Initiates the connection to remote device
-    remote_conn_pre.connect(ip, username=username, password=password,
-                            look_for_keys=False, allow_agent=False)
-
-    # Invokes the ssh paramiko shell
-    remote_conn = remote_conn_pre.invoke_shell()
-
-    print("Interactive SSH session established to " + ip + " with Username:" + username)
-    remote_conn.send("terminal monitor\n")
-    remote_conn.send("terminal length 0\n")
-    remote_conn.send(command + "\n")
-    time.sleep(3)
-    ssh_output = remote_conn.recv(100000)
-    ssh_file = open("ssh_output.txt", "w+")
-    ssh_file.write(ssh_output)
 
 
 def check_net0230(PARSED_CONFIG):
