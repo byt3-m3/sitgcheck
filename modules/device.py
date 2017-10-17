@@ -56,7 +56,7 @@ class device:
         running_config = open("./configs/{}_running_config.cfg"
                               .format(self.mgmt_ip), "w")
         running_config.write(self.ssh_output)
-
+        self.get_hostname()
         self.status = True
 
     def send_command(self, command):
