@@ -16,7 +16,7 @@ class device:
         self.mgmt_ip = mgmt_ip
         self.username = username
         self.password = password
-        self.hostname = None
+        self.hostname = "{}@{}".format(self.username, self.mgmt_ip)
         self.dev_type = 'cisco_ios'
         self.status = False
         self.id += 1
