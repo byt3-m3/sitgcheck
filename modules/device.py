@@ -1,7 +1,5 @@
 from netmiko import ConnectHandler
 import re
-import os
-import datetime
 from ciscoconfparse import CiscoConfParse
 
 
@@ -38,27 +36,32 @@ class device:
             'secret': 'secret',     # optional, defaults to ''
             'verbose': False,       # optional, defaults to False
         }
+        # Connects the NetMiko session handler
         self.net_connect = ConnectHandler(**cisco_dev)
         self.ssh_output = self.net_connect.send_command("show run")
 
-        # creates CiscoConfParse Object with running config
+        # Creates CiscoConfParse Object with running config
         self.parsed_config = CiscoConfParse(self.ssh_output.split())
 
         # Opens and writes running config on local machine
-        running_config = open("./configs/{}_running_config.cfg".format(self.mgmt_ip), "w")
+        running_config = open("./configs/{}_running_config.cfg"
+                              .format(self.mgmt_ip), "w")
         running_config.write(self.ssh_output)
 
         self.status = True
 
     def send_command(self, command):
-        ''' In order to send commands to a device, the connect() Method must be initiated before this routine will exectue'''
-        if self.status == True:
-            self.ssh_output = self.net_connect.send_command(command)
+        ''' In order to send commands to a device, '''
+        '''the connect() Method must be initiated before this routine '''
+        ''' will exectue'''
+        if self.status is True:
+            self.cmd_out = self.net_connect.send_command(command)
         else:
-            print(self.__connect_err_msg__)
+            # print(self.__connect_err_msg__)
+            errmsg.ConnectErrorMSG()
 
     def get_hostname(self):
-        if self.status == True:
+        if self.status is True:
             self.send_command('show run | inc hostname')
 
             # creates RegEX to search for hostname
@@ -71,11 +74,11 @@ class device:
             print(self.__connect_err_msg__)
 
     def get_all_interfaces(self):
-        if self.status == True:
-            local_int = []
+        if self.status is True:
             self.send_command("show run | inc interface")
             pattern = re.compile('(?<=^interface ).*', re.I | re.M)
-            results = str(pattern.findall((self.ssh_output))).replace("\\r", "").split(",")
+            results = str(pattern.findall((self.ssh_output)))\
+                .replace("\\r", "").split(",")
             del self.all_interface_list[:]
 
             for i in results:
@@ -86,15 +89,13 @@ class device:
             print(self.__connect_err_msg__)
 
     def get_up_interfaces(self):
-        if self.status == True:
+        if self.status is True:
             self.send_command("show ip int br | inc up")
-            # output = str(self.ssh_output)
-            # pattern = re.compile('(FastEthernet*\d+/\d+/\d+|GigabitEthernet*\d+/\d+/\d+|Ethernet.\d+/\d+.\d+|Vlan\d+)', re.I|re.M)
             pattern = re.compile(
-                '(Vlan\d*|FastEthernet\d*/\d*/\d*|GigabitEthernet\d*/\d*/\d*|loopback\*)', re.I | re.M)
-            # results = pattern.findall(self.ssh_output.decode())
-            results = str(pattern.findall((self.ssh_output))).replace("\\r", "").split(",")
-            # print(self.ssh_output.decode())
+                '(Vlan\d*|FastEthernet\d*/\d*/\d*|GigabitEthernet\d*/\d*/\d*|\
+                loopback\*)', re.I | re.M)
+            results = str(pattern.findall((self.ssh_output)))\
+                .replace("\\r", "").split(",")
 
             for i in results:
                 self.up_interface_list.append(i)
@@ -110,7 +111,7 @@ class device:
             print(self.__connect_err_msg__)
 
     def get_config(self):
-        if self.status == True:
+        if self.status is True:
             self.send_command("show run")
             self.parsed_config = CiscoConfParse(self.ssh_output.split())
         else:
@@ -123,25 +124,19 @@ class device:
         if len(self.all_interface_list) > 0:
             del self.all_interface_list[:]
             self.get_all_interfaces()
-
             print(self.all_interface_list)
-            # for i in self.all_interface_list:
-            #     x = i.replace("'", "").replace("["," ").replace("]"," ")
-            #     self.interface(x)
-            #     print("{}".format(x))
-            #     # int_out = self.send_command("show run interface " + i.replace("'", ""))
-            #     #self.send_command("show run interface {}".format(x))
-            #     #print(self.ssh_output)
         else:
             print(self.__connect_err_msg__)
 
     def __repr__(self):
         self.get_up_interfaces()
-        return ("Device Stats:\n SSH connection: {3} \n Hostname: {0} \n Managment IP: {1} \n User: {2}\n Interfaces: \n  {4}".format(self.hostname,
-                                                                                                                                      self.mgmt_ip,
-                                                                                                                                      self.username,
-                                                                                                                                      self.status,
-                                                                                                                                      self.up_interface_list))
+        return ("Device Stats:\n SSH connection: {3} \n Hostname: {0} \n \
+        Managment IP: {1} \n User: {2}\n Interfaces: \n  {4}"
+                .format(self.hostname,
+                        self.mgmt_ip,
+                        self.username,
+                        self.status,
+                        self.up_interface_list))
 
     class interface:
         id = 0
@@ -166,9 +161,6 @@ def list_int(device):
 
 def main():
     '''Main Routine for testing DEVICE class'''
-
-    # sw1.connect()
-    # sw1.get_hostname()
 
 
 if __name__ == '__main__':
