@@ -111,6 +111,7 @@ class device:
         else:
             print(self.__config_err_msg__)
 
+    @property
     def set_hostname(self, hostname):
         self.hostname = hostname
 
@@ -169,7 +170,7 @@ def main():
     r1.connect()
     sw1.connect()
 
-    list_int(r1)
+    r1.get_hostname()
 
 
 if __name__ == '__main__':
