@@ -82,7 +82,6 @@ class device:
             results = str(pattern.findall((self.ssh_output)))\
                 .replace("\\r", "").split(",")
             self.all_interface_list = []
-            #del self.all_interface_list[:]
             for i in results:
                 self.all_interface_list.append(i)
                 # local_int = i
