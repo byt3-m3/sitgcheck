@@ -43,18 +43,12 @@ class device:
 
         self.remote_conn_pre = paramiko.SSHClient()
         self.remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.remote_conn_pre.connect(self.mgmt_ip, username=self.username, password=self.password,
-                                     look_for_keys=False, allow_agent=False)
-        # self.remote_conn = self.remote_conn_pre.invoke_shell()
         self.status = True
         self.send_command("show run\r")
 
         # Opens and writes running config on local machine
-        self.running_config = open("./configs/{}_running_config.cfg".format(self.mgmt_ip), "w")
         self.running_config.write(self.ssh_out)
-        self.running_config.close()
 
-        self.running_config = open("./configs/{}_running_config.cfg".format(self.mgmt_ip), "r")
         self.parsed_config = CiscoConfParse(self.running_config)
         self.get_hostname()
 
@@ -75,7 +69,6 @@ class device:
     def get_hostname(self):
         if self.status is True:
             # self.send_command('show run | inc hostname')
-            self.running_config = open("./configs/{}_running_config.cfg".format(self.mgmt_ip), "r")
             # creates RegEX to search for hostname
             pattern = re.compile('(?<=hostname ).*', re.I | re.M)
             # results = self.parsed_config.find_lines(pattern)
