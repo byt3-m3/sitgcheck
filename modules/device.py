@@ -1,6 +1,10 @@
+# from netmiko import ConnectHandler
 import re
 from ciscoconfparse import CiscoConfParse
 from errors import errmsg
+import paramiko
+import time
+import os
 
 
 class device:
@@ -20,10 +24,12 @@ class device:
         self.status = False
         self.id += 1
         self.all_interface_list = []
+        self.remote_conn = paramiko.channel
         self.config = ""
         self.parsed_config = ""
         self.net_connect = []
         self.up_interface_list = list()
+        self.ssh_out = []
 
     @property
     def __name__(self):
@@ -35,25 +41,45 @@ class device:
 
     def connect(self):
 
+        self.remote_conn_pre = paramiko.SSHClient()
+        self.remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.remote_conn_pre.connect(self.mgmt_ip, username=self.username, password=self.password,
+                                     look_for_keys=False, allow_agent=False)
+        # self.remote_conn = self.remote_conn_pre.invoke_shell()
+        self.status = True
+        self.send_command("show run\r")
+
         # Opens and writes running config on local machine
+        self.running_config = open("./configs/{}_running_config.cfg".format(self.mgmt_ip), "w")
+        self.running_config.write(self.ssh_out)
+        self.running_config.close()
+
+        self.running_config = open("./configs/{}_running_config.cfg".format(self.mgmt_ip), "r")
+        self.parsed_config = CiscoConfParse(self.running_config)
         self.get_hostname()
 
     def send_command(self, command):
         ''' In order to send commands to a device, \
         the connect() Method must be initiated before this routine \
         will exectue'''
+        self.max_buff = 65535
 
         if self.status is True:
+            self.stdin, self.stdout, self.stderr = self.remote_conn_pre.exec_command(command)
+            self.ssh_out = self.stdout.read()
+            # return self.ssh_out
         else:
             # print(self.__connect_err_msg__)
             print(errmsg.ConnectErrorMSG(self))
 
     def get_hostname(self):
         if self.status is True:
-            self.send_command('show run | inc hostname')
-
+            # self.send_command('show run | inc hostname')
+            self.running_config = open("./configs/{}_running_config.cfg".format(self.mgmt_ip), "r")
             # creates RegEX to search for hostname
             pattern = re.compile('(?<=hostname ).*', re.I | re.M)
+            # results = self.parsed_config.find_lines(pattern)
+            results = pattern.findall(self.running_config.read())
             for i in results:
                 self.hostname = i
         else:
@@ -142,6 +168,24 @@ def list_int(device):
     print("Int Count: {}".format(device.all_int_count))
     for i in device.all_interface_list:
         print(i)
+
+
+def connect_ssh(ip, username, password, command):
+ # Importing paramiko and time modules for use within subroutine
+    import paramiko
+    import time
+    # Creates the paramikoe SSHClient class
+    remote_conn_pre = paramiko.SSHClient()
+
+    # Adds remote host public to local host key database
+    remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    # Initiates the connection to remote device
+    remote_conn_pre.connect(ip, username=username, password=password,
+                            look_for_keys=False, allow_agent=False)
+
+    # Invokes the ssh paramiko shell
+    remote_conn = remote_conn_pre.invoke_shell()
 
 
 def main():
