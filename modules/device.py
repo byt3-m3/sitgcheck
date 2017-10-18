@@ -1,4 +1,3 @@
-from netmiko import ConnectHandler
 import re
 from ciscoconfparse import CiscoConfParse
 from errors import errmsg
@@ -21,7 +20,6 @@ class device:
         self.status = False
         self.id += 1
         self.all_interface_list = []
-        self.remote_conn = ""
         self.config = ""
         self.parsed_config = ""
         self.net_connect = []
@@ -36,28 +34,9 @@ class device:
             errmsg.__name__err(self)
 
     def connect(self):
-        cisco_dev = {
-            'device_type': self.dev_type,
-            'ip':   self.mgmt_ip,
-            'username': self.username,
-            'password': self.password,
-            'port': 22,          # optional, defaults to 22
-            'secret': 'secret',     # optional, defaults to ''
-            'verbose': False,       # optional, defaults to False
-        }
-        # Connects the NetMiko session handler
-        self.net_connect = ConnectHandler(**cisco_dev)
-        self.ssh_output = self.net_connect.send_command("show run")
-
-        # Creates CiscoConfParse Object with running config
-        self.parsed_config = CiscoConfParse(self.ssh_output.split())
 
         # Opens and writes running config on local machine
-        running_config = open("./configs/{}_running_config.cfg"
-                              .format(self.mgmt_ip), "w")
-        running_config.write(self.ssh_output)
         self.get_hostname()
-        self.status = True
 
     def send_command(self, command):
         ''' In order to send commands to a device, \
@@ -65,7 +44,6 @@ class device:
         will exectue'''
 
         if self.status is True:
-            self.cmd_out = self.net_connect.send_command(command)
         else:
             # print(self.__connect_err_msg__)
             print(errmsg.ConnectErrorMSG(self))
@@ -76,7 +54,6 @@ class device:
 
             # creates RegEX to search for hostname
             pattern = re.compile('(?<=hostname ).*', re.I | re.M)
-            results = pattern.findall(str(self.ssh_output))
             for i in results:
                 self.hostname = i
         else:
