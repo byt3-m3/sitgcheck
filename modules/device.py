@@ -84,7 +84,6 @@ class device:
         the connect() Method must be initiated before this routine \
         will exectue'''
         self.max_buff = 65535
-
         self.init_ses()
         if self.status is True:
             self.stdin, self.stdout, self.stderr = self.remote_conn_pre.exec_command(command)
