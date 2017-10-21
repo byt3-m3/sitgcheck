@@ -60,10 +60,11 @@ def check_net1636(parsed_obj, device_obj):
         print("NET1636:\n No violations detected")
 
 
-def check_net1660(device):
+def check_net1660(device_obj):
     # opening SNMP results file
 
     # REGEX to find violating config for SNMP
+    AES_REG_A = re.findall("3DES|DES|MD5|User name.*?,", str(device_obj))
 
     # SNMP violation count
     COUNT_MD5 = AES_REG_A.count("MD5")
@@ -72,6 +73,7 @@ def check_net1660(device):
     NET1660_VIOLATION = COUNT_3DES + COUNT_MD5 + COUNT_DES
 
     # Looking for SNMP version 1 and 2c related configuration
+    parse = CiscoConfParse(device_obj)
     snmp_lines = parse.find_lines("(snmp-server.(user|group).*v(1|2))|(snmp-server community.*)")
 
     # Conditional to validate if device is using FIP-140-2 compliant SNMPv3 deployment and no SNMPv2 is being utilized
@@ -102,10 +104,10 @@ def check_net1665(parsed_obj):
         print("NET1665:\n No violations detected")
 
 
-def check_net1623(PARSED_CONFIG):
+def check_net1623(parsed_obj):
     pattern = re.compile("(login.authentication..[a-z]?)", re.I | re.M)
 
-    net1623_config_list = PARSED_CONFIG.find_parents_wo_child('^line con.[0-9]', pattern)
+    net1623_config_list = parsed_obj.find_parents_wo_child('^line con.[0-9]', pattern)
 
     # Stores Human Readable List in VAR
     net1623_config = "{0}".format("   ".join(str(i) for i in net1623_config_list))
