@@ -45,6 +45,7 @@ class device:
     def connect(self):
 
         self.remote_conn_pre = paramiko.SSHClient()
+        paramiko.util.log_to_file("./log/ssh.log")
         self.remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.remote_conn_pre.connect(self.mgmt_ip, username=self.username,
                                      password=self.password, look_for_keys=False,
