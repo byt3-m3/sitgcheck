@@ -142,6 +142,10 @@ class device:
         except Exception:
             print(errmsg.ConnectErrorMSG(self))
 
+    def get_snmp_users(self):
+        self.send_command("show snmp user")
+        return self.ssh_out.split("\n")
+
     def set_hostname(self, hostname):
         self.hostname = hostname
 
