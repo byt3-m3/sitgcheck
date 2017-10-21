@@ -1,7 +1,7 @@
 # from netmiko import ConnectHandler
 import re
 from ciscoconfparse import CiscoConfParse
-from errors import errmsg
+import errmsg
 import paramiko
 import time
 import os
