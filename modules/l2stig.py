@@ -128,6 +128,10 @@ def check_net1623(PARSED_CONFIG):
         print("NET1623:\n No violations detected")
 
 
+def check_dot1x():
+    pass
+
+
 def parse_config(FILE):
     # opening Text File
     filename = "./" + FILE
