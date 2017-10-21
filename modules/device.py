@@ -210,9 +210,8 @@ def list_int(device):
 
 
 def connect_ssh(ip, username, password, command):
- # Importing paramiko and time modules for use within subroutine
+    # Importing paramiko and time modules for use within subroutine
     import paramiko
-    import time
     # Creates the paramikoe SSHClient class
     remote_conn_pre = paramiko.SSHClient()
 
@@ -224,7 +223,7 @@ def connect_ssh(ip, username, password, command):
                             look_for_keys=False, allow_agent=False)
 
     # Invokes the ssh paramiko shell
-    remote_conn = remote_conn_pre.invoke_shell()
+    # remote_conn = remote_conn_pre.invoke_shell()
 
 
 def main():
