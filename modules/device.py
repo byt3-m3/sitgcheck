@@ -125,17 +125,19 @@ class device:
 
         return self.neighbors
 
-    def get_all_interfaces(self):
+    def get_int_all(self):
         if self.status is True:
             self.send_command("show run | inc interface")
             pattern = re.compile('(?<=^interface ).*', re.I | re.M)
-            results = str(pattern.findall((self.ssh_output)))\
+            results = str(pattern.findall((self.ssh_out)))\
                 .replace("\\r", "").split(",")
-            self.all_interface_list = []
-            for i in results:
-                self.all_interface_list.append(i)
+
+            self.int_list = []
+            for interface in results:
+                self.int_list.append(interface)
                 # local_int = i
-            self.all_int_count = len(self.all_interface_list)
+            self.int_count = len(self.int_list)
+            return self.int_list
         else:
             print(errmsg.ConnectErrorMSG(self))
 
@@ -148,7 +150,6 @@ class device:
 
     def set_hostname(self, hostname):
         self.hostname = hostname
-
 
     def __repr__(self):
         self.get_up_interfaces()
