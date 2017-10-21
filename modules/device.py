@@ -67,7 +67,7 @@ class device:
         self.read_file()
         self.parsed_config = CiscoConfParse(self.running_config)
         self.get_hostname()
-        self.close_file
+        self.close_file()
 
     def send_command(self, command):
         ''' In order to send commands to a device, \
