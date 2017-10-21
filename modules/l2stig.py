@@ -25,37 +25,36 @@ NET0441 = ["V-15434", "username"]
 # Subroutines for  STIG Checks
 
 
-def check_net0230(PARSED_CONFIG):
+def check_net0230(parsed_obj, device_obj):
     # Subroutine to Validate Password protected vty and console access
-    net0230_line_config = PARSED_CONFIG.find_parents_wo_child("^line", NET0230[1])
-
+    net0230_line_config = parsed_obj.find_parents_wo_child("^line", NET0230[1])
     if net0230_line_config:
         print("NET0230 Results: \"Network devices must be password protected\" \n" + (" fix " +
-                                                                                      NET0230[0] + " in {1} \n" + " {0}").format(" {0}".format("  ".join(str(i) for i in net0230_line_config)), config.name))
+                                                                                      NET0230[0] + " in {1} \n" + " {0}").format(" {0}".format("  ".join(str(i) for i in net0230_line_config)), device_obj.hostname))
     else:
         print("NET0230:\n No violations detected")
 
 
-def check_net0600(PARSED_CONFIG):
+def check_net0600(parsed_obj, device_obj):
     # Subroutine to Validate service password-encryption
     pattern = re.compile("no service password-encryption", re.I | re.M)
 
-    net0600_config = PARSED_CONFIG.find_lines(pattern)
+    net0600_config = parsed_obj.find_lines(pattern)
 
     if len(net0600_config) == 0:
         print("NET0600\n No violations detected")
     else:
         print("NET0600: " + NET0600[0] + " Results: \"passwords are viewable when displaying configuration information\" \n" + (
-            " enable 'service password-encryption'" + " in" + " {1} \n").format(net0600_config, config.name))
+            " enable 'service password-encryption'" + " on" + " {1} \n").format(net0600_config, device_obj.hostname))
 
 
-def check_net1636(PARSED_CONFIG):
+def check_net1636(parsed_obj, device_obj):
     # Subroutine to Validate Password protected vty and console access
-    net1636_line_config = PARSED_CONFIG.find_parents_wo_child("^line", NET1636[1])
+    net1636_line_config = parsed_obj.find_parents_wo_child("^line", NET1636[1])
 
     if net1636_line_config:
         print("NET1636 Results: \"network devices must require authentication\" \n" + (" fix " +
-                                                                                       NET1636[0] + " in {1} \n" + " {0}").format(" {0}".format("  ".join(str(i) for i in net1636_line_config)), config.name))
+                                                                                       NET1636[0] + " in {1} \n" + " {0}").format(" {0}".format("  ".join(str(i) for i in net1636_line_config)), device_obj.hostname))
     else:
         print("NET1636:\n No violations detected")
 
@@ -98,11 +97,11 @@ def check_net1660(device):
         print("NET1660:\n no violations detected")
 
 
-def check_net1665(PARSED_CONFIG):
+def check_net1665(parsed_obj):
     # Extracts SNMP configuration, the re.complie, uses the re compile functon to create a REGEX pattern to be used with cisco conf parse
     snmp_pattern = re.compile("snmp-server.community.(public|private)", re.I | re.M)
 
-    net1665_config_lines = PARSED_CONFIG.find_lines(snmp_pattern)
+    net1665_config_lines = parsed_obj.find_lines(snmp_pattern)
 
     # Stores Human Readable List in VAR
     net1665_config = "{0}".format("   ".join(str(i) for i in net1665_config_lines))
