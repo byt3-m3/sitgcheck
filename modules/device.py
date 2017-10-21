@@ -70,12 +70,22 @@ class device:
         self.get_hostname()
         self.close_file()
 
+    def init_ses(self):
+        self.remote_conn_pre = paramiko.SSHClient()
+        self.remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.remote_conn_pre.connect(self.mgmt_ip, username=self.username,
+                                     password=self.password, look_for_keys=False,
+                                     allow_agent=False)
+
+        self.status = True
+
     def send_command(self, command):
         ''' In order to send commands to a device, \
         the connect() Method must be initiated before this routine \
         will exectue'''
         self.max_buff = 65535
 
+        self.init_ses()
         if self.status is True:
             self.stdin, self.stdout, self.stderr = self.remote_conn_pre.exec_command(command)
             self.ssh_out = self.stdout.read()
