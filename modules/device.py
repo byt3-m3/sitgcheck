@@ -28,6 +28,7 @@ class device:
         self.net_connect = []
         self.up_interface_list = list()
         self.ssh_out = []
+        self.connect()
 
     @property
     def __name__(self):
