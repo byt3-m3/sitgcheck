@@ -3,8 +3,6 @@ import re
 from ciscoconfparse import CiscoConfParse
 import errmsg
 import paramiko
-import time
-import os
 
 
 class device:
