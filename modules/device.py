@@ -21,13 +21,6 @@ class device:
         self.dev_type = 'cisco_ios'
         self.status = False
         self.id += 1
-        self.all_interface_list = []
-        self.remote_conn = paramiko.channel
-        self.config = ""
-        self.parsed_config = ""
-        self.net_connect = []
-        self.up_interface_list = list()
-        self.ssh_out = []
         self.connect()
 
     @property
