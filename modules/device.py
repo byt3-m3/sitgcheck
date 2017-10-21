@@ -60,6 +60,7 @@ class device:
         self.send_command("show run\r")
 
         # Opens and writes running config on local machine
+
         self.open_file()
         self.running_config.write(self.ssh_out)
         self.close_file()
