@@ -1,4 +1,5 @@
 import re
+from ciscoconfparse import CiscoConfParse
 # CAT 1 VARs
 # Network devices must be password protected, VulnID V-3012
 NET0230 = ["V-3012", "login ."]
