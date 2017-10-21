@@ -114,15 +114,15 @@ class device:
 
         self.send_command("show cdp neighbors detail")
 
-        neighbors = list()
+        self.neighbors = list()
         for neighbor in re.findall(re_text, self.ssh_out):
             n_dict = dict()
 
             n_dict['hostname'], n_dict['ip'], n_dict['local_port'], n_dict['remote_port'] = neighbor
 
-            neighbors.append(n_dict)
+            self.neighbors.append(n_dict)
 
-        return neighbors
+        return self.neighbors
 
     def get_all_interfaces(self):
         if self.status is True:
