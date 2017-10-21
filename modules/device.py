@@ -133,10 +133,6 @@ class device:
             print(self.__connect_err_msg__)
 
     def get_config(self):
-        if self.status is True:
-            self.send_command("show run")
-            self.parsed_config = CiscoConfParse(self.ssh_output.split())
-        else:
             print(errmsg.ConnectErrorMSG(self))
 
     def set_hostname(self, hostname):
