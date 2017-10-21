@@ -139,28 +139,6 @@ class device:
         else:
             print(errmsg.ConnectErrorMSG(self))
 
-    def get_up_interfaces(self):
-        if self.status is True:
-            self.send_command("show ip int br | inc up")
-            pattern = re.compile(
-                '(Vlan\d*|FastEthernet\d*/\d*/\d*|GigabitEthernet\d*/\d*/\d*|\
-                loopback\*)', re.I | re.M)
-            results = str(pattern.findall((self.ssh_output)))\
-                .replace("\\r", "").split(",")
-
-            for i in results:
-                self.up_interface_list.append(i)
-            self.up_int_count = len(self.up_interface_list)
-
-        else:
-            print(self.__connect_err_msg__)
-
-    def get_cmd_results(self):
-        try:
-            return self.ssh_output
-        except Exception:
-            print(self.__connect_err_msg__)
-
     def get_config(self):
         self.read_file()
         try:
@@ -171,13 +149,6 @@ class device:
     def set_hostname(self, hostname):
         self.hostname = hostname
 
-    def list_interfaces(self):
-        if len(self.all_interface_list) > 0:
-            del self.all_interface_list[:]
-            self.get_all_interfaces()
-            return(self.all_interface_list)
-        elif len(self.all_interface_list) == 0:
-            print(errmsg.ListEmptyErrMsg(self))
 
     def __repr__(self):
         self.get_up_interfaces()
