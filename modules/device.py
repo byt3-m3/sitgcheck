@@ -133,6 +133,10 @@ class device:
             print(self.__connect_err_msg__)
 
     def get_config(self):
+        self.read_file()
+        try:
+            return self.running_config.readlines()
+        except Exception:
             print(errmsg.ConnectErrorMSG(self))
 
     def set_hostname(self, hostname):
