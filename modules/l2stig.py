@@ -23,10 +23,10 @@ NET_NAC_009 = ["V-5626", "dot1x fallback", "dot1x host-mode", "dot1x port-contro
 NET0441 = ["V-15434", "username"]
 
 
-# Subroutines for  STIG Checks
+# Subroutines for  CAT-1 Checks
 
 
-def check_net0230(parsed_obj, device_obj):
+def check_cat1_net0230(parsed_obj, device_obj):
     # Subroutine to Validate Password protected vty and console access
     net0230_line_config = parsed_obj.find_parents_wo_child("^line", NET0230[1])
     if net0230_line_config:
@@ -36,7 +36,7 @@ def check_net0230(parsed_obj, device_obj):
         print("NET0230:\n No violations detected")
 
 
-def check_net0600(parsed_obj, device_obj):
+def check_cat1_net0600(parsed_obj, device_obj):
     # Subroutine to Validate service password-encryption
     pattern = re.compile("no service password-encryption", re.I | re.M)
 
@@ -49,7 +49,7 @@ def check_net0600(parsed_obj, device_obj):
             " enable 'service password-encryption'" + " on" + " {1} \n").format(net0600_config, device_obj.hostname))
 
 
-def check_net1636(parsed_obj, device_obj):
+def check_cat1_net1636(parsed_obj, device_obj):
     # Subroutine to Validate Password protected vty and console access
     net1636_line_config = parsed_obj.find_parents_wo_child("^line", NET1636[1])
 
@@ -60,7 +60,7 @@ def check_net1636(parsed_obj, device_obj):
         print("NET1636:\n No violations detected")
 
 
-def check_net1660(device_obj):
+def check_cat1_net1660(device_obj):
     # opening SNMP results file
 
     # REGEX to find violating config for SNMP
@@ -87,7 +87,7 @@ def check_net1660(device_obj):
         print("NET1660:\n no violations detected")
 
 
-def check_net1665(parsed_obj):
+def check_cat1_net1665(parsed_obj, device_obj):
     # Extracts SNMP configuration, the re.complie, uses the re compile functon to create a REGEX pattern to be used with cisco conf parse
     snmp_pattern = re.compile("snmp-server.community.(public|private)", re.I | re.M)
 
@@ -104,7 +104,7 @@ def check_net1665(parsed_obj):
         print("NET1665:\n No violations detected")
 
 
-def check_net1623(parsed_obj):
+def check_cat1_net1623(parsed_obj, device_obj):
     pattern = re.compile("(login.authentication..[a-z]?)", re.I | re.M)
 
     net1623_config_list = parsed_obj.find_parents_wo_child('^line con.[0-9]', pattern)
@@ -118,7 +118,7 @@ def check_net1623(parsed_obj):
         print("NET1623:\n No violations detected")
 
 
-def check_nac009(parsed_obj, device_obj):
+def check_cat1_nac009(parsed_obj, device_obj):
     """
     Subroutine to check 802.1x configuration on the device
     """
