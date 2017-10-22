@@ -149,3 +149,12 @@ def parse_config(FILE):
 def results(DEVICE):
         # Generates generic Results Method or Main Routine
     print("\t\tResults for {}").format(DEVICE.mgmt_ip)
+
+def main():
+    '''Main Routine for l2stig checks'''
+
+
+__ver__ = "1.0"
+
+if __name__ == '__main__':
+    main()
