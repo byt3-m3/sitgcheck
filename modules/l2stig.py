@@ -118,8 +118,24 @@ def check_net1623(parsed_obj):
         print("NET1623:\n No violations detected")
 
 
-def check_dot1x():
-    pass
+def check_nac009(parsed_obj, device_obj):
+    """
+    Subroutine to check 802.1x configuration on the device
+    """
+    aaa_auth_pattern = re.compile("^aaa authentication dot1x")
+
+    # Gathers access ports from switch
+    access_ports = parsed_obj.find_parents_w_child("^interface", "switchport mode access")
+
+    # Checks the access_ports for dot1x force-authorization
+    ports_wo_dot1x = []
+    for ports in access_ports:
+        ports_wo_dot1x.append(parsed_obj.find_parents_wo_child(ports, "dot1x port-control"))
+    device_obj.ports_wo_dot1x = ports_wo_dot1x
+    if len(ports_wo_dot1x) > 0:
+        print ("\nNET1623 Results: 'switch must be configured to use 802.1x authentication on host facing access switch ports' \n configure 802.1x on the following interfaces: \n   {}").format(ports_wo_dot1x)
+    else:
+        print("NET1623:\n No violations detected")
 
 
 def parse_config(FILE):
