@@ -104,7 +104,6 @@ def check_cat1_net1665(parsed_obj, device_obj):
         print("NET1665:\n No violations detected")
 
 
-
 def check_cat1_net1623(parsed_obj, device_obj):
     pattern = re.compile("(login.authentication..[a-z]?)", re.I | re.M)
 
