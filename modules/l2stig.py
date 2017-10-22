@@ -145,7 +145,33 @@ def check_nac009(parsed_obj, device_obj):
     elif len(ports_wo_dot1x) == 0 and len(aaa_auth_results) > 0:
         print("NET1623:\n No violations detected")
 
-def check_net0441(parsed_obj, device_obj):
+def check_cat1_net0441(parsed_obj, device_obj):
+    pattern_aaa = re.compile("aaa.authentication.login.* local", re.I|re.M)
+    pattern_user = re.compile("^username(?:(?!privilege).)*$")
+    results_aaa = parsed_obj.find_lines(pattern_aaa)
+    results_user = parsed_obj.find_lines(pattern_user)
+
+    if len(results_aaa) > 0 and len(results_user) == 0:
+        print("NET0441:\n No violations detected")
+
+    elif len(results_aaa) == 0 and len(results_user) == 0:
+        print("No emergency account")
+
+    elif len(results_aaa) == 0 and len(results_user) > 0:
+        print("No emergency account")
+        print("Asign privilege level to {}".format(results_user))
+
+    elif len(results_aaa) > 0 and len(results_user) > 0:
+        print("Asign privilege level to {}".format(results_user))
+
+def check_cat2_net1639(parsed_obj, device_obj):
+    # line_config = parsed_obj.find_parents_w_child("^line","exec-timeout.(\d*)")
+    line_config = parsed_obj.find_children_w_parents("^line", "exec-timeout.(\d*)")
+    number = []
+    # for interfaces in line_config:
+    #     print(interfaces)
+    #     number.append(parsed_obj.find_blocks(interfaces))
+    print(line_config)
 
 def parse_config(FILE):
     # opening Text File
