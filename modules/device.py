@@ -3,6 +3,7 @@ import re
 from ciscoconfparse import CiscoConfParse
 import errmsg
 import paramiko
+import time
 
 
 class device:
@@ -13,15 +14,15 @@ class device:
     __connect_err_msg__ = "Error: Be sure to run the connect() method first"
     __config_err_msg__ = "Error: Unable to get latest configuration"
 
-    def __init__(self, mgmt_ip, username, password):
+    def __init__(self, mgmt_ip, username, password, **kwargs):
         self.mgmt_ip = mgmt_ip
         self.username = username
         self.password = password
         self.hostname = "{}@{}".format(self.username, self.mgmt_ip)
         self.dev_type = 'cisco_ios'
         self.status = False
+        self.enable_pass = kwargs.items()
         self.id += 1
-        self.connect()
 
     @property
     def __name__(self):
@@ -43,27 +44,31 @@ class device:
         self.running_config.close()
 
     def connect(self):
+        try:
+            self.remote_conn_pre = paramiko.SSHClient()
+            paramiko.util.log_to_file("./log/ssh.log")
+            self.remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.remote_conn_pre.connect(self.mgmt_ip, username=self.username,
+                                         password=self.password, look_for_keys=False,
+                                         allow_agent=False)
+            self.status = True
+        except paramiko.ssh_exception.AuthenticationException:
+            pass
 
-        self.remote_conn_pre = paramiko.SSHClient()
-        paramiko.util.log_to_file("./log/ssh.log")
-        self.remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.remote_conn_pre.connect(self.mgmt_ip, username=self.username,
-                                     password=self.password, look_for_keys=False,
-                                     allow_agent=False)
+    def get_run(self):
+        try:
+            self.send_command("show run")
+            self.open_file()
+            self.running_config.write(self.ssh_out)
+            self.close_file()
 
-        self.status = True
-        self.send_command("show run\r")
-
-        # Opens and writes running config on local machine
-
-        self.open_file()
-        self.running_config.write(self.ssh_out)
-        self.close_file()
-
-        self.read_file()
-        self.parsed_config = CiscoConfParse(self.running_config)
-        self.get_hostname()
-        self.close_file()
+            self.read_file()
+            self.parsed_config = CiscoConfParse(self.running_config)
+            self.get_hostname()
+            self.close_file()
+            return self.parsed_config
+        except Exception:
+            return("Error Reading Running Config")
 
     def init_ses(self):
         self.remote_conn_pre = paramiko.SSHClient()
@@ -78,15 +83,53 @@ class device:
         ''' In order to send commands to a device, \
         the connect() Method must be initiated before this routine \
         will exectue'''
-        self.max_buff = 65535
-        self.init_ses()
-        if self.status is True:
-            self.stdin, self.stdout, self.stderr = self.remote_conn_pre.exec_command(command)
-            self.ssh_out = self.stdout.read()
-            # return self.ssh_out
-        else:
-            # print(self.__connect_err_msg__)
-            print(errmsg.ConnectErrorMSG(self))
+        max_buff = 65535
+        self.ssh_out = str()
+        self.remote_conn_pre = paramiko.SSHClient()
+        paramiko.util.log_to_file("./log/ssh.log")
+        self.remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        try:
+            self.remote_conn_pre.connect(self.mgmt_ip, username=self.username,
+                                         password=self.password, look_for_keys=False,
+                                         allow_agent=False)
+            self.status = True
+        except paramiko.ssh_exception.AuthenticationException:
+            self.status = False
+            return("Unable to connect to host {}".format(self.mgmt_ip))
+        try:
+            if self.status is True:
+                self.remote_conn = self.remote_conn_pre.invoke_shell()
+                self.ssh_out += self.remote_conn.recv(max_buff)
+
+                if self.ssh_out.endswith(">"):
+                    print("User Mode Detected")
+                    self.remote_conn.send("enable\n")
+                    time.sleep(1)
+                    self.remote_conn.send(self.enable_pass[0][1] + "\n")
+                    time.sleep(1)
+                    self.ssh_out += self.remote_conn.recv(max_buff)
+                else:
+                    next
+                if self.ssh_out.endswith("#"):
+                    print("Please Wait Sending Command: {} to host {}".format(command, self.mgmt_ip))
+                    self.remote_conn.send("terminal len 0\n")
+                    self.remote_conn.send(command + "\n")
+                    time.sleep(3)
+                if self.remote_conn.recv_ready() is True:
+                    self.ssh_out += self.remote_conn.recv(max_buff)
+                    return self.ssh_out
+                    self.remote_conn.close()
+
+                else:
+                    return("no data to receive")
+
+                # self.stdin, self.stdout, self.stderr = self.remote_conn_pre.exec_command(command)
+                # self.ssh_out = self.stdout.read()
+                # return self.ssh_out
+            else:
+                return(errmsg.ConnectErrorMSG(self))
+        except Exception:
+            return("Plase Try Again")
 
     def get_hostname(self):
         if self.status is True:
