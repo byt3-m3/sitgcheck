@@ -60,11 +60,13 @@ def check_cat1_net1636(parsed_obj, device_obj):
         print("NET1636:\n No violations detected")
 
 
-def check_cat1_net1660(device_obj):
+def check_cat1_net1660(parsed_obj, device_obj):
     # opening SNMP results file
 
     # REGEX to find violating config for SNMP
-    AES_REG_A = re.findall("3DES|DES|MD5|User name.*?,", str(device_obj))
+    device_obj.send_command("show snmp user")
+
+    AES_REG_A = re.findall("3DES|DES|MD5|User name.*?,", device_obj.ssh_out)
 
     # SNMP violation count
     COUNT_MD5 = AES_REG_A.count("MD5")
@@ -73,8 +75,9 @@ def check_cat1_net1660(device_obj):
     NET1660_VIOLATION = COUNT_3DES + COUNT_MD5 + COUNT_DES
 
     # Looking for SNMP version 1 and 2c related configuration
-    parse = CiscoConfParse(device_obj)
-    snmp_lines = parse.find_lines("(snmp-server.(user|group).*v(1|2))|(snmp-server community.*)")
+    # parse = CiscoConfParse(device_obj)
+    snmp_lines = parsed_obj.find_lines(
+        "(snmp-server.(user|group).*v(1|2))|(snmp-server community.*)")
 
     # Conditional to validate if device is using FIP-140-2 compliant SNMPv3 deployment and no SNMPv2 is being utilized
     if NET1660_VIOLATION > 0 or snmp_lines:
