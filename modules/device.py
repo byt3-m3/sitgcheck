@@ -72,20 +72,6 @@ class device:
 
     def init_ses(self):
         self.remote_conn_pre = paramiko.SSHClient()
-        self.remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.remote_conn_pre.connect(self.mgmt_ip, username=self.username,
-                                     password=self.password, look_for_keys=False,
-                                     allow_agent=False)
-
-        self.status = True
-
-    def send_command(self, command):
-        ''' In order to send commands to a device, \
-        the connect() Method must be initiated before this routine \
-        will exectue'''
-        max_buff = 65535
-        self.ssh_out = str()
-        self.remote_conn_pre = paramiko.SSHClient()
         paramiko.util.log_to_file("./log/ssh.log")
         self.remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
@@ -96,7 +82,16 @@ class device:
         except paramiko.ssh_exception.AuthenticationException:
             self.status = False
             return("Unable to connect to host {}".format(self.mgmt_ip))
+
+    def send_command(self, command):
+        ''' In order to send commands to a device, \
+        the connect() Method must be initiated before this routine \
+        will exectue'''
+        max_buff = 65535
+        self.ssh_out = str()
+
         try:
+            self.init_ses()
             if self.status is True:
                 self.remote_conn = self.remote_conn_pre.invoke_shell()
                 self.ssh_out += self.remote_conn.recv(max_buff)
