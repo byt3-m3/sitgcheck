@@ -12,16 +12,17 @@ sw2 = device("192.168.1.2", "cisco", "cisco", enable_pass="cisco")
 # sw1.get_neighbors()
 print(sw2.enable_pass)
 
-print(sw1.send_command("show ip int br"))
-# devices = [sw1]
+# print(sw1.send_command("show ip int br"))
+devices = [sw1]
 #
-# for device in devices:
-#     stig.check_cat1_nac009(device.parsed_config, sw1)
-#     stig.check_cat1_net0230(device.parsed_config, sw1)
-#     stig.check_cat1_net0600(device.parsed_config, sw1)
-#     stig.check_cat1_net1636(device.parsed_config, sw1)
-#     stig.check_cat1_net1665(device.parsed_config, sw1)
-#     stig.check_cat1_net1623(device.parsed_config, sw1)
-#     stig.check_cat1_net0441(device.parsed_config, sw1)
-#     stig.check_cat2_net1639(device.parsed_config, sw1)
-#     stig.check_cat1_net1660(device.parsed_config, sw1)
+for device in devices:
+    device.get_run()
+    stig.check_cat1_nac009(device.parsed_config, sw1)
+    stig.check_cat1_net0230(device.parsed_config, sw1)
+    stig.check_cat1_net0600(device.parsed_config, sw1)
+    stig.check_cat1_net1636(device.parsed_config, sw1)
+    stig.check_cat1_net1665(device.parsed_config, sw1)
+    stig.check_cat1_net1623(device.parsed_config, sw1)
+    stig.check_cat1_net0441(device.parsed_config, sw1)
+    stig.check_cat2_net1639(device.parsed_config, sw1)
+    stig.check_cat1_net1660(device.parsed_config, sw1)
