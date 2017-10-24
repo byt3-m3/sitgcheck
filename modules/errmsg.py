@@ -1,5 +1,3 @@
-
-
 def ConnectErrorMSG(device):
     __connect_err_msg__ = "Connection Error:\n unable command to Device {0} with username {1}".format(
         device.mgmt_ip, device.username)

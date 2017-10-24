@@ -1,9 +1,9 @@
 # from netmiko import ConnectHandler
 import re
 from ciscoconfparse import CiscoConfParse
-import errmsg
 import paramiko
 import time
+import modules.errmsg as errmsg
 
 
 class device:
@@ -21,7 +21,7 @@ class device:
         self.hostname = "{}@{}".format(self.username, self.mgmt_ip)
         self.dev_type = 'cisco_ios'
         self.status = False
-        self.enable_pass = kwargs.items()
+        self.enable_pass = kwargs
         self.id += 1
 
     @property
@@ -53,10 +53,11 @@ class device:
                                          allow_agent=False)
             self.status = True
         except paramiko.ssh_exception.AuthenticationException:
-            pass
+            print("Connection Erro")
 
     def get_run(self):
         try:
+            print("Hello")
             self.send_command("show run")
             self.open_file()
             self.running_config.write(self.ssh_out)
@@ -79,6 +80,7 @@ class device:
                                          password=self.password, look_for_keys=False,
                                          allow_agent=False)
             self.status = True
+            return self.remote_conn_pre.get_transport()
         except paramiko.ssh_exception.AuthenticationException:
             self.status = False
             return("Unable to connect to host {}".format(self.mgmt_ip))
@@ -94,15 +96,16 @@ class device:
             self.init_ses()
             if self.status is True:
                 self.remote_conn = self.remote_conn_pre.invoke_shell()
-                self.ssh_out += self.remote_conn.recv(max_buff)
+                self.ssh_out += self.remote_conn.recv(max_buff).decode()
 
                 if self.ssh_out.endswith(">"):
                     print("User Mode Detected")
                     self.remote_conn.send("enable\n")
                     time.sleep(1)
-                    self.remote_conn.send(self.enable_pass[0][1] + "\n")
+                    self.remote_conn.send(self.enable_pass.get("enable_pass"))
+                    self.remote_conn.send("\n")
                     time.sleep(1)
-                    self.ssh_out += self.remote_conn.recv(max_buff)
+                    self.ssh_out += self.remote_conn.recv(max_buff).decode()
                 else:
                     next
                 if self.ssh_out.endswith("#"):
@@ -111,7 +114,7 @@ class device:
                     self.remote_conn.send(command + "\n")
                     time.sleep(3)
                 if self.remote_conn.recv_ready() is True:
-                    self.ssh_out += self.remote_conn.recv(max_buff)
+                    self.ssh_out += self.remote_conn.recv(max_buff).decode()
                     return self.ssh_out
                     self.remote_conn.close()
 
@@ -155,7 +158,7 @@ class device:
 
             self.neighbors.append(n_dict)
 
-        return self.neighbors
+        print(self.neighbors)
 
     def get_int_all(self):
         if self.status is True:
