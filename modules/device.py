@@ -3,7 +3,7 @@ import re
 from ciscoconfparse import CiscoConfParse
 import paramiko
 import time
-import modules.errmsg as errmsg
+import modules.errmsg
 
 
 class device:

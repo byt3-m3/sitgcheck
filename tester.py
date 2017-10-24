@@ -9,9 +9,9 @@ sw2 = device("192.168.1.2", "cisco", "cisco", enable_pass="cisco")
 #
 
 
-# print(sw1.send_command("show ip route"))
 # sw1.get_neighbors()
 print(sw2.enable_pass)
+
 
 print(sw1.send_command("show ip int br"))
 # devices = [sw1]
