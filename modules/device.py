@@ -3,6 +3,7 @@ import re
 from ciscoconfparse import CiscoConfParse
 import paramiko
 import time
+import os
 import modules.errmsg
 
 
@@ -72,6 +73,9 @@ class device:
             return("Error Reading Running Config")
 
     def init_ses(self):
+        if not os.path.exists("./log"):
+            os.mkdir("./log")
+
         self.remote_conn_pre = paramiko.SSHClient()
         paramiko.util.log_to_file("./log/ssh.log")
         self.remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
