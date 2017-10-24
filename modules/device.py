@@ -58,7 +58,6 @@ class device:
 
     def get_run(self):
         try:
-            print("Hello")
             self.send_command("show run")
             self.open_file()
             self.running_config.write(self.ssh_out)
