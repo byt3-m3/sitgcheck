@@ -85,7 +85,7 @@ def check_cat1_net1660(parsed_obj, device_obj):
               " Execute 'show snmp user' on system")
         print(" ")
         print("NET1660 " + NET1660[0] + " Results: \"SNMPv1 and SNMPv2 must not be used\" \n " +
-              "{0}").format(" ".join(str(i) for i in snmp_lines))
+              "{0}".format(" ".join(str(i) for i in snmp_lines)))
     else:
         print("NET1660:\n no violations detected")
 
@@ -116,7 +116,7 @@ def check_cat1_net1623(parsed_obj, device_obj):
     net1623_config = "{0}".format("   ".join(str(i) for i in net1623_config_list))
 
     if len(net1623_config_list) > 0:
-        print ("\nNET1623 Results: 'Network device must require authentication for console access' \n Please enable authentication for the following lines: \n   {}").format(net1623_config)
+        print ("\nNET1623 Results: 'Network device must require authentication for console access' \n Please enable authentication for the following lines: \n   {}".format(net1623_config))
     else:
         print("NET1623:\n No violations detected")
 
@@ -139,11 +139,10 @@ def check_cat1_nac009(parsed_obj, device_obj):
     device_obj.ports_wo_dot1x = ports_wo_dot1x
 
     if len(ports_wo_dot1x) > 0 and len(aaa_auth_results) > 0:
-        print ("\nNET1623 Results: 'switch must be configured to use 802.1x authentication on host facing access switch ports' \n configure 802.1x on the following interfaces: \n   {}").format(ports_wo_dot1x)
+        print ("\nNET1623 Results: 'switch must be configured to use 802.1x authentication on host facing access switch ports' \n configure 802.1x on the following interfaces: \n   {}".format(ports_wo_dot1x))
 
     elif len(ports_wo_dot1x) > 0 and len(aaa_auth_results) == 0:
-        print ("\nNET1623 Results: 'switch must be configured to use 802.1x authentication on host facing access switch ports'\
-        \n Configure 802.1x aaa Authentication Group \n configure 802.1x on the following interfaces: \n   {}").format(ports_wo_dot1x)
+        print ("\nNET1623 Results: 'switch must be configured to use 802.1x authentication on host facing access switch ports' \n Configure 802.1x aaa Authentication Group \n configure 802.1x on the following interfaces: \n   {}".format(ports_wo_dot1x))
 
     elif len(ports_wo_dot1x) == 0 and len(aaa_auth_results) > 0:
         print("NET1623:\n No violations detected")
