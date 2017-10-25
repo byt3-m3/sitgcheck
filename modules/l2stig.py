@@ -30,10 +30,10 @@ def check_cat1_net0230(parsed_obj, device_obj):
     # Subroutine to Validate Password protected vty and console access
     net0230_line_config = parsed_obj.find_parents_wo_child("^line", NET0230[1])
     if net0230_line_config:
-        print("NET0230 Results: \"Network devices must be password protected\" \n" + (" fix " +
-                                                                                      NET0230[0] + " in {1} \n" + " {0}").format(" {0}".format("  ".join(str(i) for i in net0230_line_config)), device_obj.hostname))
+        return("NET0230 Results: \"Network devices must be password protected\" \n" + (" fix " +
+                                                                                       NET0230[0] + " in {1} \n" + " {0}").format(" {0}".format("  ".join(str(i) for i in net0230_line_config)), device_obj.hostname))
     else:
-        print("NET0230:\n No violations detected")
+        return("NET0230:\n No violations detected")
 
 
 def check_cat1_net0600(parsed_obj, device_obj):
@@ -43,9 +43,9 @@ def check_cat1_net0600(parsed_obj, device_obj):
     net0600_config = parsed_obj.find_lines(pattern)
 
     if len(net0600_config) == 0:
-        print("NET0600\n No violations detected")
+        return("NET0600\n No violations detected")
     else:
-        print("NET0600: " + NET0600[0] + " Results: \"passwords are viewable when displaying configuration information\" \n" + (
+        return("NET0600: " + NET0600[0] + " Results: \"passwords are viewable when displaying configuration information\" \n" + (
             " enable 'service password-encryption'" + " on" + " {1} \n").format(net0600_config, device_obj.hostname))
 
 
@@ -54,10 +54,10 @@ def check_cat1_net1636(parsed_obj, device_obj):
     net1636_line_config = parsed_obj.find_parents_wo_child("^line", NET1636[1])
 
     if net1636_line_config:
-        print("NET1636 Results: \"network devices must require authentication\" \n" + (" fix " +
-                                                                                       NET1636[0] + " in {1} \n" + " {0}").format(" {0}".format("  ".join(str(i) for i in net1636_line_config)), device_obj.hostname))
+        return("NET1636 Results: \"network devices must require authentication\" \n" + (" fix " +
+                                                                                        NET1636[0] + " in {1} \n" + " {0}").format(" {0}".format("  ".join(str(i) for i in net1636_line_config)), device_obj.hostname))
     else:
-        print("NET1636:\n No violations detected")
+        return("NET1636:\n No violations detected")
 
 
 def check_cat1_net1660(parsed_obj, device_obj):
@@ -125,7 +125,7 @@ def check_cat1_nac009(parsed_obj, device_obj):
     """
     Subroutine to check 802.1x configuration on the device
     """
-    aaa_auth_pattern = re.compile("^aaa authentication dot1x")
+    # aaa_auth_pattern = re.compile("^aaa authentication dot1x")
     # Vaidates dot1x Authentication is configured
     aaa_auth_results = parsed_obj.find_lines("^aaa authentication dot1x")
 
@@ -139,13 +139,13 @@ def check_cat1_nac009(parsed_obj, device_obj):
     device_obj.ports_wo_dot1x = ports_wo_dot1x
 
     if len(ports_wo_dot1x) > 0 and len(aaa_auth_results) > 0:
-        print ("\nNET1623 Results: 'switch must be configured to use 802.1x authentication on host facing access switch ports' \n configure 802.1x on the following interfaces: \n   {}".format(ports_wo_dot1x))
+        return("\nNET1623 Results: 'switch must be configured to use 802.1x authentication on host facing access switch ports' \n configure 802.1x on the following interfaces: \n   {}".format(ports_wo_dot1x))
 
     elif len(ports_wo_dot1x) > 0 and len(aaa_auth_results) == 0:
-        print ("\nNET1623 Results: 'switch must be configured to use 802.1x authentication on host facing access switch ports' \n Configure 802.1x aaa Authentication Group \n configure 802.1x on the following interfaces: \n   {}".format(ports_wo_dot1x))
+        return("\nNET1623 Results: 'switch must be configured to use 802.1x authentication on host facing access switch ports' \n Configure 802.1x aaa Authentication Group \n configure 802.1x on the following interfaces: \n   {}".format(ports_wo_dot1x))
 
     elif len(ports_wo_dot1x) == 0 and len(aaa_auth_results) > 0:
-        print("NET1623:\n No violations detected")
+        return("NET1623:\n No violations detected")
 
 
 def check_cat1_net0441(parsed_obj, device_obj):
