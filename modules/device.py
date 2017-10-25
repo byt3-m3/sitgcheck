@@ -142,6 +142,7 @@ class device:
             results = pattern.findall(self.running_config.read())
             for i in results:
                 self.hostname = i
+            return self.hostname
         else:
             print(errmsg.ConnectErrorMSG(self))
 
