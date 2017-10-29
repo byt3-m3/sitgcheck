@@ -194,14 +194,12 @@ class device:
         self.hostname = hostname
 
     def __repr__(self):
-        self.get_up_interfaces()
         return ("Device Stats:\n SSH connection: {3} \n Hostname: {0} \n \
-        Managment IP: {1} \n User: {2}\n Interfaces: \n  {4}"
+        Managment IP: {1} \n User: {2}"
                 .format(self.hostname,
                         self.mgmt_ip,
                         self.username,
-                        self.status,
-                        self.up_interface_list))
+                        self.status))
 
     class interface:
         id = 0
