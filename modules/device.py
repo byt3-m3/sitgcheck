@@ -112,7 +112,7 @@ class device:
                 else:
                     next
                 if self.ssh_out.endswith("#"):
-                    print("Please Wait Sending Command: {} to host {}".format(command, self.mgmt_ip))
+                    print("Please Wait Sending Command: '{}' to host {}".format(command, self.mgmt_ip))
                     self.remote_conn.send("terminal len 0\n")
                     self.remote_conn.send(command + "\n")
                     time.sleep(3)
