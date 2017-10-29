@@ -161,7 +161,7 @@ class device:
 
             self.neighbors.append(n_dict)
 
-        print(self.neighbors)
+        return(self.neighbors)
 
     def get_int_all(self):
         if self.status is True:
