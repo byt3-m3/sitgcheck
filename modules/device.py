@@ -195,8 +195,12 @@ class device:
         self.hostname = hostname
 
     def __repr__(self):
-        return ("Device Stats:\n SSH connection: {3} \n Hostname: {0} \n \
-        Managment IP: {1} \n User: {2}"
+        return ("""
+            Device Stats:
+            SSH connection: {3}
+            Hostname: {0}
+            Managment IP: {1}
+            User: {2} \n"""
                 .format(self.hostname,
                         self.mgmt_ip,
                         self.username,
