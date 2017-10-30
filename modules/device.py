@@ -53,7 +53,7 @@ class device:
                                          password=self.password, look_for_keys=False,
                                          allow_agent=False)
             self.status = True
-        except paramiko.ssh_exception.AuthenticationException:
+        except Exceptin:
             print("Connection Erro")
 
     def get_run(self):
@@ -84,9 +84,9 @@ class device:
                                          allow_agent=False)
             self.status = True
             return self.remote_conn_pre.get_transport()
-        except paramiko.ssh_exception.AuthenticationException:
+        except Exception:
             self.status = False
-            return("Unable to connect to host {}".format(self.mgmt_ip))
+            print("Unable to connect to host {}".format(self.mgmt_ip))
 
     def send_command(self, command):
         ''' In order to send commands to a device, \
